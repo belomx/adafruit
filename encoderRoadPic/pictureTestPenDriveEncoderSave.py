@@ -15,6 +15,7 @@ def get_path ( initialPath):
                 	path = os.path.join(dirname, subdirname)
                 	if os.path.ismount(os.path.join(dirname, subdirname)):
 				return path
+	return "/home"
 
 
 def get_camera (cam, width, height):
@@ -23,12 +24,12 @@ def get_camera (cam, width, height):
                 pygame.init()
                 pygame.camera.init()
                 cam = pygame.camera.Camera("/dev/video0",(width,height))
-        cam.start()
         return cam
 
 
 def take_picture(cam, width, height):
 	#setup window
+	cam.start()
 	windowSurfaceObj = pygame.display.set_mode((width,height),1,16)
 	pygame.display.set_caption('Camera')
 	#take a picture
@@ -61,11 +62,12 @@ def get_encoder_delta(encoder):
 
 
 def encoder_worker(path, cam, width, height, encoder):
+	delta = 0
 	while 1:
 		delta += get_encoder_delta(encoder)
 		if delta > 5:
-			windowSurfaceObj = thread.start_new_thread(take_picture(cam, width, height))
-			thread.start_new_thread(save_picture(path, windowSurfaceObj))
+			windowSurfaceObj = thread.start_new_thread(take_picture, (cam, width, height))
+			thread.start_new_thread(save_picture, (path, windowSurfaceObj))
 			windowSurfaceObj = None
 			
 
@@ -84,5 +86,4 @@ try:
 	#start the worker
 	encoder_worker(path, cam, width, height, encoder)
 finally:
-	if cam != None:
-		cam.sop()
+	print "end"
