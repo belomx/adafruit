@@ -15,7 +15,7 @@ def get_path ( initialPath):
                 	path = os.path.join(dirname, subdirname)
                 	if os.path.ismount(os.path.join(dirname, subdirname)):
 				return path
-	return "/home"
+	return "/home/pics"
 
 
 def get_camera (cam, width, height):
@@ -53,7 +53,7 @@ def get_rotary_encoder():
 def save_picture(path, windowSurfaceObj):
 	#save picture
 	if windowSurfaceObj != None:
-		pygame.image.save(windowSurfaceObj,path+'/picture.jpg')
+		pygame.image.save(windowSurfaceObj,path+'/picture'+str(time.time())+'.jpg')
  
 
 def get_encoder_delta(encoder):
@@ -66,9 +66,12 @@ def encoder_worker(path, cam, width, height, encoder):
 	while 1:
 		delta += get_encoder_delta(encoder)
 		if delta > 5:
-			windowSurfaceObj = thread.start_new_thread(take_picture, (cam, width, height))
-			thread.start_new_thread(save_picture, (path, windowSurfaceObj))
+			#windowSurfaceObj = thread.start_new_thread(take_picture, (cam, width, height))
+			#thread.start_new_thread(save_picture, (path, windowSurfaceObj))
+			windowSurfaceObj = take_picture(cam, width, height)
+			save_picture(path, windowSurfaceObj)	
 			windowSurfaceObj = None
+			delta = 0
 			
 
 try: 
