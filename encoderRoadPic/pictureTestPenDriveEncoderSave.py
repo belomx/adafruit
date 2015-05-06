@@ -51,7 +51,7 @@ def get_rotary_encoder():
 
 def save_picture(path, windowSurfaceObj):
 	#save picture
-	if windowSurfaceObj != None
+	if windowSurfaceObj != None:
 		pygame.image.save(windowSurfaceObj,path+'/picture.jpg')
  
 
@@ -62,22 +62,27 @@ def get_encoder_delta(encoder):
 
 def encoder_worker(path, cam, width, height, encoder):
 	while 1:
-		delta = get_encoder_delta(encoder)
+		delta += get_encoder_delta(encoder)
 		if delta > 5:
 			windowSurfaceObj = thread.start_new_thread(take_picture(cam, width, height))
 			thread.start_new_thread(save_picture(path, windowSurfaceObj))
 			windowSurfaceObj = None
 			
- 
-path = get_path( "/media")
-print "the path = %s" %  path
 
-encoder = get_rotary_encoder()
-
-width = 352 
-height = 288 
-cam = None
-
-cam = get_camera(cam, width, height)
-
-encoder_worker(path, cam, width, height, encoder)
+try: 
+	#get path to save in the pen drive
+	path = get_path( "/media")
+	print "the path = %s" %  path
+	#get the encoder
+	encoder = get_rotary_encoder()
+	#define the scale of the pictures
+	width = 352 
+	height = 288 
+	cam = None
+	#get the camera
+	cam = get_camera(cam, width, height)
+	#start the worker
+	encoder_worker(path, cam, width, height, encoder)
+finally:
+	if cam != None:
+		cam.sop()
